@@ -10,6 +10,12 @@ export interface Notification {
   read: boolean;
 }
 
+export interface UserPreferences {
+  pushEnabled: boolean;
+  emailEnabled: boolean;
+  smsEnabled: boolean;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -20,6 +26,7 @@ export interface User {
   status: UserStatus;
   suspensionEnd?: string;
   notifications: Notification[];
+  preferences: UserPreferences;
 }
 
 export interface FoodSize {

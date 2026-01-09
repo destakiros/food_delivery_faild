@@ -1,12 +1,13 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, UserStatus, Notification as AppNotification } from '../types';
+import { User, UserStatus, Notification as AppNotification, UserPreferences } from '../types';
 
 interface AuthContextType {
   currentUser: User | null;
   users: User[];
   login: (email: string, pass: string) => boolean;
   register: (name: string, email: string, phone: string, pass: string) => void;
-  addUser: (user: Omit<User, 'id' | 'status' | 'notifications'>) => void;
+  addUser: (user: Omit<User, 'id' | 'status' | 'notifications' | 'preferences'>) => void;
   updateUser: (id: string, updates: Partial<User>) => void;
   deleteUser: (id: string) => void;
   logout: () => void;
@@ -17,6 +18,12 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const defaultPreferences: UserPreferences = {
+  pushEnabled: true,
+  emailEnabled: true,
+  smsEnabled: false
+};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [users, setUsers] = useState<User[]>(() => {
@@ -29,7 +36,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       role: 'admin', 
       password: 'admin123',
       status: 'Active',
-      notifications: []
+      notifications: [],
+      preferences: { ...defaultPreferences }
     };
     return saved ? JSON.parse(saved) : [admin];
   });
@@ -61,18 +69,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: Math.random().toString(36).substr(2, 9),
       name, email, phone, password: pass, role: 'customer',
       status: 'Active',
-      notifications: []
+      notifications: [],
+      preferences: { ...defaultPreferences }
     };
     setUsers([...users, newUser]);
     setCurrentUser(newUser);
   };
 
-  const addUser = (user: Omit<User, 'id' | 'status' | 'notifications'>) => {
+  const addUser = (user: Omit<User, 'id' | 'status' | 'notifications' | 'preferences'>) => {
     const newUser: User = {
       ...user,
       id: Math.random().toString(36).substr(2, 9),
       status: 'Active',
-      notifications: []
+      notifications: [],
+      preferences: { ...defaultPreferences }
     };
     setUsers(prev => [...prev, newUser]);
   };
